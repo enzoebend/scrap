@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 +------------------------------------------------------------------+
-¦ CAR HUNTER PRO — Sportives Allemandes Stage 1 ¦
-¦ Mobile.de • AutoScout24 • HeyCar • LeBonCoin ¦
-¦ 25 profils | DE | 5k–22.5k€ | <130k km | 2014+ ¦
-¦ BMW 1/2/3/4/5 M • Audi A3/A4/A5/S/RS • VW • Mercedes C/E/A ¦
+Â¦ CAR HUNTER PRO â€” Sportives Allemandes Stage 1 Â¦
+Â¦ Mobile.de â€¢ AutoScout24 â€¢ HeyCar â€¢ LeBonCoin Â¦
+Â¦ 25 profils | DE | 5kâ€“22.5kâ‚¬ | <130k km | 2014+ Â¦
+Â¦ BMW 1/2/3/4/5 M â€¢ Audi A3/A4/A5/S/RS â€¢ VW â€¢ Mercedes C/E/A Â¦
 +------------------------------------------------------------------+
 """
 import re
@@ -21,28 +22,28 @@ from typing import Optional
 from urllib.parse import urlencode
 from bs4 import BeautifulSoup
 # ------------------------------------------------------------------
-# CONFIG ? seule section à modifier
+# CONFIG ? seule section Ã  modifier
 # ------------------------------------------------------------------
 CONFIG = {
 "DISCORD_WEBHOOK_URL": "https://discord.com/api/webhooks/1488788430925074516/B3YQWKbrWdJtKZ-Mr14hgz7M7slRGxNYo5xUD_414Gi4CKz5pEmORQ1HC4PBNrv5kBJ1",
-"PRICE_MIN": 5_000, # € minimum (filtre épaves)
-"PRICE_MAX": 22_500, # € maximum absolu
-"PRICE_TARGET": 15_000, # € budget cible (bonus scoring)
-"DEAL_SCORE_MIN": 60, # score /100 pour déclencher une notif
-"PRICE_BELOW_MARKET": 0.85, # annonce < 85% du prix marché ? deal
+"PRICE_MIN": 5_000, # â‚¬ minimum (filtre Ã©paves)
+"PRICE_MAX": 22_500, # â‚¬ maximum absolu
+"PRICE_TARGET": 15_000, # â‚¬ budget cible (bonus scoring)
+"DEAL_SCORE_MIN": 60, # score /100 pour dÃ©clencher une notif
+"PRICE_BELOW_MARKET": 0.85, # annonce < 85% du prix marchÃ© ? deal
 "CHECK_INTERVAL": 240, # secondes entre cycles (4 min)
-"REQUEST_DELAY": (3.0, 7.0), # délai anti-ban entre requêtes
+"REQUEST_DELAY": (3.0, 7.0), # dÃ©lai anti-ban entre requÃªtes
 "DB_PATH": "car_hunter_de.db",
 "LOG_PATH": "car_hunter_de.log",
 "PROXIES": [], # ex: ["http://user:pass@ip:port"]
 }
 # ------------------------------------------------------------------
 
-# PROFILS MODÈLES
+# PROFILS MODÃˆLES
 # ------------------------------------------------------------------
 MODEL_PROFILES = {
 # ---------------------------------------------------
-# BMW — Série 1 / 2 / 3 / 4 / 5 + M
+# BMW â€” SÃ©rie 1 / 2 / 3 / 4 / 5 + M
 # ---------------------------------------------------
 "bmw_120_230": {
 "label": "BMW 120i / 125i / 230i (B48)", "emoji": " ",
@@ -50,7 +51,7 @@ MODEL_PROFILES = {
 "keywords": ["120i", "125i", "230i", "bmw 1er", "bmw 118i", "f40", "f22", "b48"],
 "engine_kw": ["b48", "zf8", "m sport", "steptronic", "f22", "f40"],
 "min_year": 2016, "min_power": 136, "market_base": 19_000,
-"stage1_note": "Stage 1 B48 ? 230–250 ch, ZF8 très robuste et reprogrammable",
+"stage1_note": "Stage 1 B48 ? 230â€“250 ch, ZF8 trÃ¨s robuste et reprogrammable",
 "color": 0x2980B9,
 },
 "bmw_m135i": {
@@ -59,44 +60,44 @@ MODEL_PROFILES = {
 "keywords": ["m135i", "m140i", "m135", "m140", "n55", "6 zylinder"],
 "engine_kw": ["n55", "m135", "m140", "xdrive", "6 zyl"],
 "min_year": 2013, "min_power": 315, "market_base": 22_000,
-"stage1_note": "Stage 1 N55 ? 380–420 ch, sensations de M3 pour 3x moins cher",
+"stage1_note": "Stage 1 N55 ? 380â€“420 ch, sensations de M3 pour 3x moins cher",
 "color": 0xE67E22,
 },
 "bmw_320_330": {
-"label": "BMW 320i / 330i Série 3 (B46/B48)", "emoji": " ",
+"label": "BMW 320i / 330i SÃ©rie 3 (B46/B48)", "emoji": " ",
 "make": "bmw", "model_id": "3er",
 "keywords": ["320i", "330i", "serie 3", "bmw 3", "f30", "g20", "320d sport", "330e"],
 "engine_kw": ["b46", "b48", "320i", "330i", "m sport", "xdrive", "zf8"],
 "min_year": 2016, "min_power": 156, "market_base": 22_500,
-"stage1_note": "Stage 1 B48 ? 270–300 ch, berline premium polyvalente et fiable",
+"stage1_note": "Stage 1 B48 ? 270â€“300 ch, berline premium polyvalente et fiable",
 "color": 0x1F618D,
 },
 "bmw_m340": {
-"label": "BMW 340i / M340i (B58 — G20/F30)", "emoji": " ",
+"label": "BMW 340i / M340i (B58 â€” G20/F30)", "emoji": " ",
 "make": "bmw", "model_id": "3er",
 "keywords": ["340i", "m340i", "b58", "m340", "335i", "335", "f30 340"],
 "engine_kw": ["b58", "340i", "m340", "xdrive", "6 cylindres", "zf8"],
 "min_year": 2015, "min_power": 300, "market_base": 26_000,
-"stage1_note": "Stage 1 B58 ? 400–450 ch, moteur légendaire, rival M3 budget",
+"stage1_note": "Stage 1 B58 ? 400â€“450 ch, moteur lÃ©gendaire, rival M3 budget",
 "color": 0x154360,
 },
 "bmw_430_440": {
-"label": "BMW 430i / 440i Série 4 Coupé (F32/G22)", "emoji": " ",
+"label": "BMW 430i / 440i SÃ©rie 4 CoupÃ© (F32/G22)", "emoji": " ",
 
 "make": "bmw", "model_id": "4er",
 "keywords": ["430i", "440i", "serie 4", "bmw 4", "f32", "g22", "420i", "430", "coupe bmw"],
 "engine_kw": ["430i", "440i", "b48", "b58", "m sport", "xdrive"],
 "min_year": 2014, "min_power": 184, "market_base": 24_000,
-"stage1_note": "Stage 1 B58 sur 440i ? 400 ch, coupé 4 pl élégant à prix réduit",
+"stage1_note": "Stage 1 B58 sur 440i ? 400 ch, coupÃ© 4 pl Ã©lÃ©gant Ã  prix rÃ©duit",
 "color": 0x1A5276,
 },
 "bmw_520_530": {
-"label": "BMW 520i / 530i Série 5 (G30)", "emoji": " ",
+"label": "BMW 520i / 530i SÃ©rie 5 (G30)", "emoji": " ",
 "make": "bmw", "model_id": "5er",
 "keywords": ["520i", "530i", "serie 5", "bmw 5", "g30", "f10", "520", "530"],
 "engine_kw": ["520i", "530i", "b46", "b48", "m sport", "xdrive", "zf8"],
 "min_year": 2016, "min_power": 170, "market_base": 25_000,
-"stage1_note": "Stage 1 ? 250–310 ch, grand confort + puissance, idéal GT",
+"stage1_note": "Stage 1 ? 250â€“310 ch, grand confort + puissance, idÃ©al GT",
 "color": 0x117A65,
 },
 "bmw_m2_m3_m4": {
@@ -105,11 +106,11 @@ MODEL_PROFILES = {
 "keywords": ["bmw m2", "bmw m3", "bmw m4", "s55", "s58", "m2 competition", "m3 f80", "m4 f82"],
 "engine_kw": ["s55", "s58", "m2", "m3", "m4", "competition", "dct", "m xdrive"],
 "min_year": 2015, "min_power": 370, "market_base": 35_000,
-"stage1_note": "Stage 1 S55/S58 ? 480–520 ch, holy grail du tuning BMW",
+"stage1_note": "Stage 1 S55/S58 ? 480â€“520 ch, holy grail du tuning BMW",
 "color": 0x922B21,
 },
 # ---------------------------------------------------
-# AUDI — A3 / A4 / A5 / S / RS
+# AUDI â€” A3 / A4 / A5 / S / RS
 # ---------------------------------------------------
 "audi_a3_s3": {
 "label": "Audi A3 2.0 TFSI / S3 (8V/8Y)", "emoji": " ",
@@ -131,12 +132,12 @@ MODEL_PROFILES = {
 
 },
 "audi_a5_s5": {
-"label": "Audi A5 2.0 TFSI / S5 Coupé (B9)", "emoji": " ",
+"label": "Audi A5 2.0 TFSI / S5 CoupÃ© (B9)", "emoji": " ",
 "make": "audi", "model_id": "a5",
 "keywords": ["audi a5 2.0", "a5 tfsi", "a5 s line", "s5 b9", "a5 190", "a5 252", "a5 coupe", "a5 sportback"],
 "engine_kw": ["2.0 tfsi", "s5", "quattro", "s tronic", "3.0 tfsi"],
 "min_year": 2016, "min_power": 150, "market_base": 25_000,
-"stage1_note": "Stage 1 A5 ? 280 ch, coupé premium élégant, concurrent Série 4",
+"stage1_note": "Stage 1 A5 ? 280 ch, coupÃ© premium Ã©lÃ©gant, concurrent SÃ©rie 4",
 "color": 0x7D3C98,
 },
 "audi_rs3_rs4": {
@@ -149,7 +150,7 @@ MODEL_PROFILES = {
 "color": 0xC0392B,
 },
 # ---------------------------------------------------
-# MERCEDES — Classe A / C / E / CLA / GLA
+# MERCEDES â€” Classe A / C / E / CLA / GLA
 # ---------------------------------------------------
 "mercedes_a250": {
 "label": "Mercedes A250 / A35 AMG (M260/M260E)", "emoji": " ",
@@ -166,7 +167,7 @@ MODEL_PROFILES = {
 "keywords": ["cla 250", "cla250", "gla 250", "gla250", "cla amg line", "gla amg", "cla 35"],
 "engine_kw": ["m260", "cla250", "gla250", "amg", "7g-dct", "4matic"],
 "min_year": 2018, "min_power": 218, "market_base": 25_000,
-"stage1_note": "Stage 1 ? 300 ch, look coupé ou SUV compact selon goût",
+"stage1_note": "Stage 1 ? 300 ch, look coupÃ© ou SUV compact selon goÃ»t",
 "color": 0x0E6655,
 },
 "mercedes_c250_c300": {
@@ -176,7 +177,7 @@ MODEL_PROFILES = {
 "engine_kw": ["m264", "m270", "c200", "c250", "c300", "amg line", "9g-tronic"],
 
 "min_year": 2015, "min_power": 156, "market_base": 22_000,
-"stage1_note": "Stage 1 M264 ? 260 ch, berline premium à prix Série 3",
+"stage1_note": "Stage 1 M264 ? 260 ch, berline premium Ã  prix SÃ©rie 3",
 "color": 0x148F77,
 },
 "mercedes_c43_amg": {
@@ -185,11 +186,11 @@ MODEL_PROFILES = {
 "keywords": ["c43 amg", "c63 amg", "c43", "c63", "amg c43", "amg c63", "m177", "m276"],
 "engine_kw": ["c43", "c63", "m177", "m276", "amg", "9g-tronic", "speedshift"],
 "min_year": 2015, "min_power": 367, "market_base": 32_000,
-"stage1_note": "Stage 1 M177 (C63) ? 550+ ch, V8 biturbo le plus emblématique",
+"stage1_note": "Stage 1 M177 (C63) ? 550+ ch, V8 biturbo le plus emblÃ©matique",
 "color": 0x922B21,
 },
 # ---------------------------------------------------
-# VOLKSWAGEN — Golf / Polo / Arteon / Golf R
+# VOLKSWAGEN â€” Golf / Polo / Arteon / Golf R
 # ---------------------------------------------------
 "golf_gti_r": {
 "label": "VW Golf GTI / Golf R / 2.0 TSI (MK7/8)", "emoji": " ",
@@ -197,7 +198,7 @@ MODEL_PROFILES = {
 "keywords": ["golf gti", "golf r", "golf 2.0 tsi", "golf 7 gti", "golf 8 gti", "golf gtd", "golf r mk7"],
 "engine_kw": ["gti", "golf r", "2.0 tsi", "ea888", "dsg", "4motion"],
 "min_year": 2015, "min_power": 180, "market_base": 20_000,
-"stage1_note": "Stage 1 GTI ? 300 ch / Golf R ? 380 ch, références absolues hot-hatch",
+"stage1_note": "Stage 1 GTI ? 300 ch / Golf R ? 380 ch, rÃ©fÃ©rences absolues hot-hatch",
 "color": 0xE74C3C,
 },
 "polo_gti": {
@@ -206,7 +207,7 @@ MODEL_PROFILES = {
 "keywords": ["polo gti", "polo 2.0 tsi", "polo aw", "polo gti 2018"],
 "engine_kw": ["gti", "2.0 tsi", "aw", "dsg"],
 "min_year": 2018, "min_power": 196, "market_base": 16_500,
-"stage1_note": "Stage 1 ? 240–260 ch, châssis vif, parfait en ville",
+"stage1_note": "Stage 1 ? 240â€“260 ch, chÃ¢ssis vif, parfait en ville",
 "color": 0x27AE60,
 },
 "arteon": {
@@ -215,12 +216,12 @@ MODEL_PROFILES = {
 "keywords": ["arteon 2.0 tsi", "arteon r-line", "arteon elegance", "arteon shooting brake"],
 "engine_kw": ["2.0 tsi", "r-line", "dsg", "4motion"],
 "min_year": 2017, "min_power": 150, "market_base": 21_000,
-"stage1_note": "Stage 1 ? 270 ch sur 190ch, grand tourisme élégant sous-coté",
+"stage1_note": "Stage 1 ? 270 ch sur 190ch, grand tourisme Ã©lÃ©gant sous-cotÃ©",
 "color": 0x2C3E50,
 },
 # ---------------------------------------------------
 
-# SEAT / CUPRA — Leon / Formentor
+# SEAT / CUPRA â€” Leon / Formentor
 # ---------------------------------------------------
 "seat_cupra": {
 "label": "Seat Leon Cupra / Cupra Formentor 2.0 TSI", "emoji": " ",
@@ -228,11 +229,11 @@ MODEL_PROFILES = {
 "keywords": ["leon cupra", "cupra leon", "cupra formentor", "cupra 290", "cupra 300", "leon fr 2.0", "formentor 2.0"],
 "engine_kw": ["cupra", "2.0 tsi", "dsg", "ea888", "4drive"],
 "min_year": 2016, "min_power": 180, "market_base": 18_000,
-"stage1_note": "Stage 1 ? 310–340 ch, meilleur rapport prix/perf du segment",
+"stage1_note": "Stage 1 ? 310â€“340 ch, meilleur rapport prix/perf du segment",
 "color": 0xC0392B,
 },
 # ---------------------------------------------------
-# SKODA — Octavia RS / Superb
+# SKODA â€” Octavia RS / Superb
 # ---------------------------------------------------
 "octavia_rs": {
 "label": "Skoda Octavia RS 2.0 TSI / RS 245", "emoji": " ",
@@ -240,7 +241,7 @@ MODEL_PROFILES = {
 "keywords": ["octavia rs", "octavia 2.0 tsi", "octavia rs 245", "octavia combi rs", "skoda rs"],
 "engine_kw": ["rs", "2.0 tsi", "dsg", "ea888"],
 "min_year": 2016, "min_power": 180, "market_base": 17_500,
-"stage1_note": "Stage 1 ? 270–290 ch, sleeper parfait, coffre géant",
+"stage1_note": "Stage 1 ? 270â€“290 ch, sleeper parfait, coffre gÃ©ant",
 "color": 0x34495E,
 },
 "superb_280": {
@@ -253,7 +254,7 @@ MODEL_PROFILES = {
 "color": 0x2E4057,
 },
 # ---------------------------------------------------
-# WILDCARDS — Peugeot 308 GTi / Honda Civic Type R
+# WILDCARDS â€” Peugeot 308 GTi / Honda Civic Type R
 # ---------------------------------------------------
 "peugeot_308_gti": {
 "label": "Peugeot 308 GTi 270 / 250 (EP6)", "emoji": " ",
@@ -261,7 +262,7 @@ MODEL_PROFILES = {
 "keywords": ["308 gti", "308 gti 270", "308 gti 250", "peugeot gti"],
 "engine_kw": ["gti", "270", "ep6", "tds"],
 "min_year": 2015, "min_power": 250, "market_base": 16_000,
-"stage1_note": "Stage 1 ? 310 ch, châssis parmi les plus précis du segment",
+"stage1_note": "Stage 1 ? 310 ch, chÃ¢ssis parmi les plus prÃ©cis du segment",
 
 "color": 0xD4AC0D,
 },
@@ -271,16 +272,16 @@ MODEL_PROFILES = {
 "keywords": ["civic type r", "type r fk8", "civic fk8", "k20c1", "type r 2017", "civic fl5"],
 "engine_kw": ["type r", "k20c1", "fk8", "fl5", "320 ch", "2.0 vtec turbo"],
 "min_year": 2017, "min_power": 310, "market_base": 30_000,
-"stage1_note": "Stage 1 ? 380+ ch, recordman au Nürburgring FWD, fiabilité Honda",
+"stage1_note": "Stage 1 ? 380+ ch, recordman au NÃ¼rburgring FWD, fiabilitÃ© Honda",
 "color": 0xE74C3C,
 },
 "renault_megane_rs": {
-"label": "Renault Mégane RS 280 / 300 Trophy (M5Pt)", "emoji": " ",
+"label": "Renault MÃ©gane RS 280 / 300 Trophy (M5Pt)", "emoji": " ",
 "make": "renault", "model_id": "megane",
 "keywords": ["megane rs", "megane 280", "megane 300", "rs trophy", "megane rs 2018", "4control"],
 "engine_kw": ["rs", "trophy", "280", "300", "1.8 turbo", "4control", "edc"],
 "min_year": 2018, "min_power": 280, "market_base": 21_000,
-"stage1_note": "Stage 1 ? 330 ch + 4Control (4 roues directrices), châssis de rêve",
+"stage1_note": "Stage 1 ? 330 ch + 4Control (4 roues directrices), chÃ¢ssis de rÃªve",
 "color": 0xF39C12,
 },
 }
@@ -288,12 +289,12 @@ MODEL_PROFILES = {
 # FILTRES GLOBAUX
 # ------------------------------------------------------------------
 FILTERS = {
-"km_max": 130_000, # étendu à 130k pour les Série 3/5, S4, C43 d'occasion
-"year_min": 2014, # étendu à 2014 pour M135i N55, C63 W205, Golf GTI MK7
+"km_max": 130_000, # Ã©tendu Ã  130k pour les SÃ©rie 3/5, S4, C43 d'occasion
+"year_min": 2014, # Ã©tendu Ã  2014 pour M135i N55, C63 W205, Golf GTI MK7
 "year_max": 2026,
 "price_min": CONFIG["PRICE_MIN"],
 "price_max": CONFIG["PRICE_MAX"],
-# Mots clés qui donnent un bonus de score (présence dans titre/description)
+# Mots clÃ©s qui donnent un bonus de score (prÃ©sence dans titre/description)
 "bonus_keywords": [
 # Entretien / historique
 "scheckheftgepflegt", "full service history", "serviceheft", "scheckheft",
@@ -321,33 +322,33 @@ FILTERS = {
 # Garantie
 "garantie constructeur", "garantie", "garantie 1 an",
 ],
-# Termes ÉLIMINATOIRES — annonce rejetée immédiatement, aucune exception
+# Termes Ã‰LIMINATOIRES â€” annonce rejetÃ©e immÃ©diatement, aucune exception
 "blacklist": [
-# Dommages structurels / mécaniques
+# Dommages structurels / mÃ©caniques
 "unfall", "unfallschaden", "unfallwagen",
 "hagelschaden", "hagelschaeden",
 "motorschaden", "getriebeschaden", "getriebebschaden",
 "rost", "rostschaden", "durchgerostet",
-"wasserschaden", "brandschaden", "inondé", "flood",
-# Statut véhicule
+"wasserschaden", "brandschaden", "inondÃ©", "flood",
+# Statut vÃ©hicule
 "bastlerfahrzeug", "bastler", "defekt", "defekte",
 "nicht fahrbereit", "non-runner",
 "rebuilt", "salvage", "write-off",
 "export", "exportfahrzeug",
-# Français
-"accidente", "accidenté", "sinistre",
-"epave", "épave", "non roulant",
-"pour pieces", "pour pièces",
-"a reparer", "à réparer",
-"moteur hs", "boite hs", "boîte hs",
+# FranÃ§ais
+"accidente", "accidentÃ©", "sinistre",
+"epave", "Ã©pave", "non roulant",
+"pour pieces", "pour piÃ¨ces",
+"a reparer", "Ã  rÃ©parer",
+"moteur hs", "boite hs", "boÃ®te hs",
 "sans ct", "sans controle technique",
-"rouille", "rouillé",
+"rouille", "rouillÃ©",
 # Fraude potentielle
-"km non garanti", "km non certifié",
+"km non garanti", "km non certifiÃ©",
 ],
 }
 # ------------------------------------------------------------------
-# GÉNÉRATEUR D'URLs AUTOMATIQUE
+# GÃ‰NÃ‰RATEUR D'URLs AUTOMATIQUE
 # ------------------------------------------------------------------
 def _build_mobile_de_urls():
 # makeId:modelId pour Mobile.de (source: suchen.mobile.de)
@@ -590,9 +591,9 @@ code = e.response.status_code
 if code == 429:
 w = 90 * (attempt + 1); log.warning(f" Rate-limited {w}s"); time.sleep(w)
 elif code in (403, 503):
-log.warning(f" Bloqué {code}"); time.sleep(40)
+log.warning(f" BloquÃ© {code}"); time.sleep(40)
 else:
-log.error(f"HTTP {code} — {url[:55]}"); break
+log.error(f"HTTP {code} â€” {url[:55]}"); break
 except Exception as e:
 log.warning(f"Erreur req (#{attempt+1}): {e}"); time.sleep(8*(attempt+1))
 return None
@@ -612,7 +613,7 @@ return _int(m.group(1)) if m else 0
 def _fuel(t):
 t = t.lower()
 for f, kws in [("Diesel",["diesel","tdi","cdi"]),("Essence",["benzin","essence","tfsi","tsi","turbo"]),
-("Hybride",["hybrid","phev"]),("Électrique",["elektro","electric","bev"]),("GPL",["lpg","gpl"])]:
+("Hybride",["hybrid","phev"]),("Ã‰lectrique",["elektro","electric","bev"]),("GPL",["lpg","gpl"])]:
 if any(k in t for k in kws): return f
 return "?"
 
@@ -648,7 +649,7 @@ body = item.get_text(" ", strip=True)
 loc_el= item.select_one(".seller-info__location, .listing-location")
 loc = loc_el.get_text(strip=True)[:50] if loc_el else "Deutschland"
 s_el = item.select_one(".seller-info__type, .badge--dealer")
-seller= "pro" if s_el and "händler" in s_el.get_text(strip=True).lower() else "private"
+seller= "pro" if s_el and "hÃ¤ndler" in s_el.get_text(strip=True).lower() else "private"
 if not title or price==0 or not link: continue
 cars.append(Car(title=title,price=price,km=_km(body),year=_year(body),
 fuel=_fuel(body),transmission=_trans(body),power_hp=_hp(body),
@@ -764,7 +765,7 @@ text = (car.title + " " + car.description).lower()
 if any(kw in text for kw in FILTERS["blacklist"]): return False
 return True
 # ------------------------------------------------------------------
-# ESTIMATION MARCHÉ
+# ESTIMATION MARCHÃ‰
 # ------------------------------------------------------------------
 def estimate_market_price(car, profile):
 base = profile["market_base"] if profile else 16_000
@@ -822,17 +823,17 @@ if s>=65: return 0xF1C40F
 return 0xE67E22
 def score_label(s):
 if s>=85: return " EXCEPTIONNEL"
-if s>=75: return " TRÈS BON DEAL"
+if s>=75: return " TRÃˆS BON DEAL"
 if s>=65: return " BON DEAL"
-return " INTÉRESSANT"
+return " INTÃ‰RESSANT"
 def bar(ratio):
 pct = max(0, min(60, int((1-ratio)*100)))
 filled = min(10, pct//5)
-return f"`{'¦'*filled}{'¦'*(10-filled)}` **-{pct}%** vs marché"
+return f"`{'Â¦'*filled}{'Â¦'*(10-filled)}` **-{pct}%** vs marchÃ©"
 def send_discord(car, profile):
 url = CONFIG["DISCORD_WEBHOOK_URL"]
 if not url or "VOTRE_WEBHOOK" in url:
-log.warning(" Webhook Discord non configuré"); return False
+log.warning(" Webhook Discord non configurÃ©"); return False
 ratio = car.price / car.market_price if car.market_price else 1.0
 
 flag = {"mobile.de":" ","autoscout24":" ","leboncoin":" ","heycar":" "}.get(car.source," ")
@@ -840,16 +841,16 @@ p_emoji= profile["emoji"] if profile else " "
 p_label= profile["label"] if profile else car.source
 stage1 = profile.get("stage1_note","") if profile else ""
 fields = [
-{"name":" Prix", "value":f"**{car.price:,} €**", "inline":True},
-{"name":" Marché estimé", "value":f"~{car.market_price:,} €", "inline":True},
-{"name":" Économie", "value":f"**{car.savings:+,} €**", "inline":True},
-{"name":" Année", "value":str(car.year) if car.year else "?", "inline":True},
+{"name":" Prix", "value":f"**{car.price:,} â‚¬**", "inline":True},
+{"name":" MarchÃ© estimÃ©", "value":f"~{car.market_price:,} â‚¬", "inline":True},
+{"name":" Ã‰conomie", "value":f"**{car.savings:+,} â‚¬**", "inline":True},
+{"name":" AnnÃ©e", "value":str(car.year) if car.year else "?", "inline":True},
 {"name":" Km", "value":f"{car.km:,} km" if car.km else "?", "inline":True},
-{"name":" Boîte", "value":car.transmission, "inline":True},
+{"name":" BoÃ®te", "value":car.transmission, "inline":True},
 {"name":" Carburant", "value":car.fuel, "inline":True},
 {"name":" Lieu", "value":car.location[:35], "inline":True},
 {"name":" Vendeur", "value":car.seller_type.capitalize(), "inline":True},
-{"name":" Décote", "value":bar(ratio), "inline":False},
+{"name":" DÃ©cote", "value":bar(ratio), "inline":False},
 ]
 if stage1:
 fields.append({"name":" Stage 1","value":f"*{stage1}*","inline":False})
@@ -866,7 +867,7 @@ payload = {
 "url": car.link,
 "color": score_color(car.deal_score),
 "fields": fields,
-"footer":{"text":f"CarHunter DE • {datetime.now().strftime('%H:%M %d/%m/%Y')} • uid {car.uid}"},
+"footer":{"text":f"CarHunter DE â€¢ {datetime.now().strftime('%H:%M %d/%m/%Y')} â€¢ uid {car.uid}"},
 }],
 }
 if car.image_url and car.image_url.startswith("http"):
@@ -874,7 +875,7 @@ payload["embeds"][0]["thumbnail"] = {"url": car.image_url}
 try:
 r = requests.post(url, json=payload, timeout=12)
 r.raise_for_status()
-log.info(f" Discord ? {car.title[:50]} | {car.price}€ | score {car.deal_score}")
+log.info(f" Discord ? {car.title[:50]} | {car.price}â‚¬ | score {car.deal_score}")
 return True
 except Exception as e:
 log.error(f"Discord error: {e}"); return False
@@ -890,12 +891,12 @@ payload = {
 "color":0x3498DB,
 "description":(
 f"**Deals ce cycle :** {deals}\n"
-f"**Total scannées :** {stats['total_scanned']:,}\n"
-f"**Notifications envoyées :** {stats['total_sent']:,}\n"
+f"**Total scannÃ©es :** {stats['total_scanned']:,}\n"
+f"**Notifications envoyÃ©es :** {stats['total_sent']:,}\n"
 f"**Jours actifs :** {stats['days']}\n\n"
-f"**Modèles surveillés :**\n{profiles_txt}"
+f"**ModÃ¨les surveillÃ©s :**\n{profiles_txt}"
 ),
-"footer":{"text":f"CarHunter DE • {datetime.now().strftime('%H:%M %d/%m/%Y')}"},
+"footer":{"text":f"CarHunter DE â€¢ {datetime.now().strftime('%H:%M %d/%m/%Y')}"},
 }],
 }
 try: requests.post(url, json=payload, timeout=10)
@@ -910,12 +911,12 @@ for source_key, url_list in all_urls.items():
 parser = PARSERS.get(source_key)
 if not parser: continue
 for url, profile_key in url_list:
-log.info(f" {source_key} [{profile_key}] — {url[:80]}...")
+log.info(f" {source_key} [{profile_key}] â€” {url[:80]}...")
 html = get_page(url, session)
 if html:
 all_cars.extend(parser(html, profile_key))
 else:
-log.warning(f" Échec {url[:60]}")
+log.warning(f" Ã‰chec {url[:60]}")
 return all_cars
 def process_cycle(db, session):
 cars = scrape_all(session)
@@ -939,9 +940,9 @@ if is_deal:
 notified = send_discord(car, profile)
 if notified: deals_sent += 1; db.increment_stats(deals_sent=1)
 db.mark_seen(car, notified=notified)
-log.debug(f"[{car.source}] {car.title[:38]:38s} | {car.price:>6}€ | {car.km:>7}km | "
-f"score {car.deal_score:>3} | deal={is_deal} | {pk or '—'}")
-log.info(f" Cycle terminé — {len(cars)} annonces | {deals_sent} deals envoyés")
+log.debug(f"[{car.source}] {car.title[:38]:38s} | {car.price:>6}â‚¬ | {car.km:>7}km | "
+f"score {car.deal_score:>3} | deal={is_deal} | {pk or 'â€”'}")
+log.info(f" Cycle terminÃ© â€” {len(cars)} annonces | {deals_sent} deals envoyÃ©s")
 return deals_sent
 # ------------------------------------------------------------------
 # MAIN
@@ -950,15 +951,15 @@ def main():
 all_urls = build_all_search_urls()
 total_url = sum(len(v) for v in all_urls.values())
 log.info("-" * 65)
-log.info(" CarHunter DE Pro — Sportives Allemandes Stage 1")
+log.info(" CarHunter DE Pro â€” Sportives Allemandes Stage 1")
 log.info("-" * 65)
-log.info(f" Webhook : {' configuré' if 'VOTRE_WEBHOOK' not in CONFIG['DISCORD_WEBHOOK_URL'] else ' NON configuré'}")
-log.info(f" Budget : {CONFIG['PRICE_MIN']:,}€ ? {CONFIG['PRICE_MAX']:,}€ (cible {CONFIG['PRICE_TARGET']:,}€)")
+log.info(f" Webhook : {' configurÃ©' if 'VOTRE_WEBHOOK' not in CONFIG['DISCORD_WEBHOOK_URL'] else ' NON configurÃ©'}")
+log.info(f" Budget : {CONFIG['PRICE_MIN']:,}â‚¬ ? {CONFIG['PRICE_MAX']:,}â‚¬ (cible {CONFIG['PRICE_TARGET']:,}â‚¬)")
 log.info(f" Filtres : ={FILTERS['km_max']:,}km | ={FILTERS['year_min']} | Essence | Blacklist: {len(FILTERS['blacklist'])} termes")
-log.info(f" Modèles : {len(MODEL_PROFILES)} profils :")
+log.info(f" ModÃ¨les : {len(MODEL_PROFILES)} profils :")
 for p in MODEL_PROFILES.values():
-log.info(f" {p['emoji']} {p['label']:35s} | base marché {p['market_base']:,}€ | {p.get('stage1_note','')[:55]}")
-log.info(f" URLs : {total_url} générées automatiquement")
+log.info(f" {p['emoji']} {p['label']:35s} | base marchÃ© {p['market_base']:,}â‚¬ | {p.get('stage1_note','')[:55]}")
+log.info(f" URLs : {total_url} gÃ©nÃ©rÃ©es automatiquement")
 log.info(f" Cycle : toutes les {CONFIG['CHECK_INTERVAL']}s")
 log.info("-" * 65)
 db = Database(CONFIG["DB_PATH"])
@@ -969,7 +970,7 @@ while True:
 cycle += 1
 
 log.info(f"\n{'-'*55}")
-log.info(f" CYCLE #{cycle} — {datetime.now().strftime('%H:%M:%S %d/%m/%Y')}")
+log.info(f" CYCLE #{cycle} â€” {datetime.now().strftime('%H:%M:%S %d/%m/%Y')}")
 log.info(f"{'-'*55}")
 try:
 deals = process_cycle(db, session)
@@ -977,7 +978,7 @@ if datetime.now() - last_summary > timedelta(hours=1):
 send_discord_summary(db.get_stats(), deals)
 last_summary = datetime.now()
 except KeyboardInterrupt:
-log.info("\n Arrêt utilisateur"); break
+log.info("\n ArrÃªt utilisateur"); break
 except Exception:
 log.error(f"Erreur:\n{traceback.format_exc()}")
 log.info(f" Prochain cycle dans {CONFIG['CHECK_INTERVAL']}s...")
