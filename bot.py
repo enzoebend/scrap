@@ -36,7 +36,20 @@ CONFIG = {
     "REQUEST_DELAY": (3.0, 7.0),  # délai anti-ban entre requêtes
     "DB_PATH": "car_hunter_de.db",
     "LOG_PATH": "car_hunter_de.log",
-    "PROXIES": [],  # ex: ["http://user:pass@ip:port"]
+    "PROXIES": [
+        "http://qjginrka:geecaliqhz3a@31.59.20.176:6754",
+        "http://qjginrka:geecaliqhz3a@23.95.150.145:6114",
+        "http://qjginrka:geecaliqhz3a@198.23.239.134:6540",
+        "http://qjginrka:geecaliqhz3a@45.38.107.97:6014",
+        "http://qjginrka:geecaliqhz3a@107.172.163.27:6543",
+        "http://qjginrka:geecaliqhz3a@198.105.121.200:6462",
+        "http://qjginrka:geecaliqhz3a@216.10.27.159:6837",
+        "http://qjginrka:geecaliqhz3a@142.111.67.146:5611",
+        "http://qjginrka:geecaliqhz3a@191.96.254.138:6185",
+        "http://qjginrka:geecaliqhz3a@31.58.9.4:6077"
+    ],
+
+    "CHECK_INTERVAL": 240,
 }
 
 # ------------------------------------------------------------------
