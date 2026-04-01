@@ -351,31 +351,30 @@ FILTERS = {
 # GÉNÉRATEUR D'URLs AUTOMATIQUE
 # ------------------------------------------------------------------
 def _build_mobile_de_urls():
-# makeId:modelId pour Mobile.de (source: suchen.mobile.de)
-MOBILE_IDS = {
-
-("volkswagen", "golf"): "14900:18",
-("volkswagen", "polo"): "14900:51",
-("volkswagen", "arteon"): "14900:130",
-("audi", "a3"): "1900:9",
-("audi", "a4"): "1900:11",
-("audi", "a5"): "1900:12",
-("audi", "rs3"): "1900:91",
-("bmw", "1er"): "3500:17",
-("bmw", "3er"): "3500:19",
-("bmw", "4er"): "3500:21",
-("bmw", "5er"): "3500:22",
-("bmw", "m2"): "3500:52",
-("mercedes", "a-klasse"): "17200:12",
-("mercedes", "cla"): "17200:28",
-("mercedes", "c-klasse"): "17200:14",
-("seat", "leon"): "18700:9",
-("skoda", "octavia"): "19300:17",
-("skoda", "superb"): "19300:19",
-("peugeot", "308"): "20100:16",
-("honda", "civic"): "10000:7",
-("renault", "megane"): "21100:24",
-}
+    # makeId:modelId pour Mobile.de (source: suchen.mobile.de)
+    MOBILE_IDS = {
+        ("volkswagen", "golf"): "14900:18",
+        ("volkswagen", "polo"): "14900:51",
+        ("volkswagen", "arteon"): "14900:130",
+        ("audi", "a3"): "1900:9",
+        ("audi", "a4"): "1900:11",
+        ("audi", "a5"): "1900:12",
+        ("audi", "rs3"): "1900:91",
+        ("bmw", "1er"): "3500:17",
+        ("bmw", "3er"): "3500:19",
+        ("bmw", "4er"): "3500:21",
+        ("bmw", "5er"): "3500:22",
+        ("bmw", "m2"): "3500:52",
+        ("mercedes", "a-klasse"): "17200:12",
+        ("mercedes", "cla"): "17200:28",
+        ("mercedes", "c-klasse"): "17200:14",
+        ("seat", "leon"): "18700:9",
+        ("skoda", "octavia"): "19300:17",
+        ("skoda", "superb"): "19300:19",
+        ("peugeot", "308"): "20100:16",
+        ("honda", "civic"): "10000:7",
+        ("renault", "megane"): "21100:24",
+    }
 base = "https://suchen.mobile.de/fahrzeuge/search.html"
 urls, seen = [], set()
 for pk, p in MODEL_PROFILES.items():
